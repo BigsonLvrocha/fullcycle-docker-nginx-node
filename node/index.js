@@ -52,7 +52,6 @@ async function buildApp(repository) {
       const name = faker.name.firstName();
       await repository.insertName(name);
       const names = await repository.fetchNames();
-      console.log(JSON.stringify(names, null, 2))
       res.send(`
         <h1>Full Cycle Rocks!</h1>
         <ul>
@@ -66,7 +65,7 @@ async function buildApp(repository) {
 buildPeopleRepository()
   .then(repo => buildApp(repo)
     .then(app => app.listen(3000, () => { 
-      console.log('app is open') 
+      console.log('app is running') 
     })))
   .catch(error => {
     console.error(error);
