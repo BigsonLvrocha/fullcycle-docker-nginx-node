@@ -6,7 +6,7 @@ COPY --from=jwilder/dockerize /usr/local/bin/dockerize /app
 COPY ./package.json /app/
 COPY ./package-lock.json /app/
 
-RUN npm ci
+RUN npm ci --production
 
 COPY . .
 
