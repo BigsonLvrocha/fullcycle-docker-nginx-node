@@ -56,6 +56,9 @@ services:
       - type: bind
         source: ./node
         target: /app
+      - type: volume
+        source: node-modules
+        target: /app/node_modules
     command: ["npm", "run", "dev"]
     networks:
       - node-network
@@ -68,3 +71,4 @@ networks:
 
 volumes:
   mysql-data:
+  node-modules:
