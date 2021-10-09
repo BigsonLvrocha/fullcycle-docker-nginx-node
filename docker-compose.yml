@@ -1,0 +1,70 @@
+version: '3'
+services:
+  db:
+    image: mysql:5.7
+    command: --innodb-use-native-aio=0
+    container_name: db
+    restart: always
+    volumes:
+      - type: volume
+        source: mysql-data
+        target: /var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=nodedb
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - node-network
+
+  api:
+    build:
+      context: ./node
+    image: bigsonlvrocha/codeeducation-docker-node-api
+    container_name: api
+    command: ["sh", "-c", "./dockerize -wait tcp://db:3306 && node index.js"]
+    environment:
+      DB_USER: root
+      DB_PASS: root
+      DB_NAME: nodedb
+      DB_PORT: 3306
+      DB_HOST: db
+    networks:
+      - node-network
+    depends_on:
+      - db
+
+  start-dependencies:
+    image: jwilder/dockerize
+    command: dockerize -wait tcp://db:3306
+    networks:
+      - node-network
+    depends_on:
+      - db
+
+  dev-api:
+    image: node:16-alpine3.11
+    container_name: dev-api
+    ports:
+      - 3000:3000
+    environment:
+      DB_USER: root
+      DB_PASS: root
+      DB_NAME: nodedb
+      DB_PORT: 3306
+      DB_HOST: db
+    working_dir: /app
+    volumes:
+      - type: bind
+        source: ./node
+        target: /app
+    command: ["npm", "run", "dev"]
+    networks:
+      - node-network
+    depends_on:
+      - db
+
+networks:
+  node-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
