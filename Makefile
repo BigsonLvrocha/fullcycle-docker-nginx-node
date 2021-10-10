@@ -1,5 +1,5 @@
-COMPOSE_RUN=docker-compose run --rm
-COMPOSE_UP=docker-compose up
+COMPOSE_RUN=HOSTUSER=`id -u`:`id -g` docker-compose run --rm
+COMPOSE_UP=HOSTUSER=`id -u`:`id -g` docker-compose up
 RUN_NPM=${COMPOSE_RUN} dev-api npm
 
 
