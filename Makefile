@@ -1,10 +1,11 @@
-COMPOSE_RUN=HOSTUSER=`id -u`:`id -g` docker-compose run --rm
-COMPOSE_UP=HOSTUSER=`id -u`:`id -g` docker-compose up
-RUN_NPM=${COMPOSE_RUN} dev-api npm
+COMPOSE_DEV=HOSTUSER=`id -u`:`id -g` docker-compose -f docker-compose.dev.yml
+COMPOSE_RUN_DEV=${COMPOSE_DEV} run --rm
+COMPOSE_UP_DEV=${COMPOSE_DEV} up
+RUN_NPM=${COMPOSE_RUN_DEV} dev-api npm
 
 
 start-dependencies:
-	${COMPOSE_RUN} start-dependencies
+	${COMPOSE_RUN_DEV} start-dependencies
 
 i:
 	${RUN_NPM} i --save $(module)
@@ -19,10 +20,13 @@ run:
 	${RUN_NPM} $(command)
 
 dev: start-dependencies
-	${COMPOSE_UP} dev-api
+	${COMPOSE_UP_DEV} dev-api
 
 up:
-	${COMPOSE_UP} -d --build api
+	docker-compose up --build -d
 
 down:
 	docker-compose down
+
+dev-down:
+	${COMPOSE_DEV} down
