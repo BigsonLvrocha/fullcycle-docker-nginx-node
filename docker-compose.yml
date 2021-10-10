@@ -15,47 +15,6 @@ services:
     networks:
       - node-network
 
-  start-dependencies:
-    image: jwilder/dockerize
-    command: dockerize -wait tcp://db:3306
-    networks:
-      - node-network
-    depends_on:
-      - db
-
-  dev-api:
-    image: node:16-alpine3.11
-    container_name: dev-api
-    user: ${HOSTUSER-root}
-    ports:
-      - 3000:3000
-    environment:
-      DB_USER: root
-      DB_PASS: root
-      DB_NAME: nodedb
-      DB_PORT: 3306
-      DB_HOST: db
-    working_dir: /app
-    volumes:
-      - type: bind
-        source: ./node
-        target: /app
-    command: ["npm", "run", "dev"]
-    networks:
-      - node-network
-    depends_on:
-      - db
-
-  nginx:
-    build:
-      context: ./nginx
-    image: bigsonlvrocha/codeeducation-docker-node-nginx
-    container_name: nginx
-    ports:
-      - "80:80"
-    networks:
-      - node-network
-
   api:
     build:
       context: ./node
@@ -72,8 +31,18 @@ services:
       - node-network
     depends_on:
       - db
-      - nginx
 
+  nginx:
+    build:
+      context: ./nginx
+    image: bigsonlvrocha/codeeducation-docker-node-nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    networks:
+      - node-network
+    depends_on:
+      - api
 
 networks:
   node-network:
@@ -81,4 +50,3 @@ networks:
 
 volumes:
   mysql-data:
-  node-modules:
