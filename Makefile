@@ -20,3 +20,9 @@ run:
 
 dev: start-dependencies
 	${COMPOSE_UP} dev-api
+
+up:
+	${COMPOSE_UP} -d --build api
+
+down:
+	docker-compose down
